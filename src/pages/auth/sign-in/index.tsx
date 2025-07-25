@@ -1,6 +1,7 @@
 import { zodResolver } from '@hookform/resolvers/zod'
 import { Helmet } from 'react-helmet-async'
 import { useForm } from 'react-hook-form'
+import { toast } from 'sonner'
 
 import { Button, Input, Label } from '@/components'
 
@@ -23,6 +24,13 @@ export const SignIn = () => {
     await new Promise((resolve) => setTimeout(resolve, 2000))
 
     console.log(data)
+
+    toast.success('Enviamos um link de atualização para seu e-mail', {
+      action: {
+        label: 'Reenviar',
+        onClick: () => handleSignIn(data),
+      },
+    })
   }
 
   return (
