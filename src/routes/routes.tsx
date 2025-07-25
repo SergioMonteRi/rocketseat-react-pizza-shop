@@ -1,14 +1,26 @@
 import { createBrowserRouter } from 'react-router'
 
-import { Dashboard, SignIn } from '@/pages'
+import { AppLayout, AuthLayout, Dashboard, SignIn } from '@/pages'
 
 export const router = createBrowserRouter([
   {
     path: '/',
-    element: <Dashboard />,
+    element: <AppLayout />,
+    children: [
+      {
+        path: '/',
+        element: <Dashboard />,
+      },
+    ],
   },
   {
     path: '/sign-in',
-    element: <SignIn />,
+    element: <AuthLayout />,
+    children: [
+      {
+        path: '/sign-in',
+        element: <SignIn />,
+      },
+    ],
   },
 ])
