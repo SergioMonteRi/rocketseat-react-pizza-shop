@@ -1,8 +1,30 @@
+import { zodResolver } from '@hookform/resolvers/zod'
 import { Helmet } from 'react-helmet-async'
+import { useForm } from 'react-hook-form'
 
 import { Button, Input, Label } from '@/components'
 
+import { signInFormSchema } from './schema'
+import type { SignInFormData } from './types'
+
 export const SignIn = () => {
+  const {
+    register,
+    handleSubmit,
+    formState: { isSubmitting, errors },
+  } = useForm<SignInFormData>({
+    resolver: zodResolver(signInFormSchema),
+    defaultValues: {
+      email: '',
+    },
+  })
+
+  const handleSignIn = async (data: SignInFormData) => {
+    await new Promise((resolve) => setTimeout(resolve, 2000))
+
+    console.log(data)
+  }
+
   return (
     <>
       <Helmet title="Login" />
@@ -18,13 +40,18 @@ export const SignIn = () => {
             </p>
           </div>
 
-          <form className="space-y-4">
+          <form className="space-y-4" onSubmit={handleSubmit(handleSignIn)}>
             <div className="space-y-2">
               <Label htmlFor="email">Seu e-mail</Label>
-              <Input id="email" type="email" />
+              <Input id="email" type="email" {...register('email')} />
+              {errors.email && (
+                <p className="text-destructive text-xs">
+                  {errors.email.message}
+                </p>
+              )}
             </div>
 
-            <Button className="w-full" type="submit">
+            <Button className="w-full" type="submit" disabled={isSubmitting}>
               Acessar painel
             </Button>
           </form>
