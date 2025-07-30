@@ -19,6 +19,9 @@ export const SignUp = () => {
   } = useForm<SignUpFormData>({
     resolver: zodResolver(signUpFormSchema),
     defaultValues: {
+      restaurantName: '',
+      managerName: '',
+      phone: '',
       email: '',
     },
   })
