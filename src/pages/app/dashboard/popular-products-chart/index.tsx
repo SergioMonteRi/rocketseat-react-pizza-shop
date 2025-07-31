@@ -69,6 +69,8 @@ export const PopularProductsChart = () => {
                 value,
                 index,
               }) => {
+                if (midAngle === undefined || index === undefined) return null
+
                 const RADIAN = Math.PI / 180
                 const radius = 12 + innerRadius + (outerRadius - innerRadius)
                 const x = cx + radius * Math.cos(-midAngle * RADIAN)

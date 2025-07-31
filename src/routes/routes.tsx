@@ -4,6 +4,7 @@ import {
   AppLayout,
   AuthLayout,
   Dashboard,
+  NotFound,
   Orders,
   SignIn,
   SignUp,
@@ -13,6 +14,7 @@ export const router = createBrowserRouter([
   {
     path: '/',
     element: <AppLayout />,
+    errorElement: <NotFound />,
     children: [
       {
         path: '/',
