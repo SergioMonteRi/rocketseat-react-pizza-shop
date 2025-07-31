@@ -1,4 +1,6 @@
 export { Button } from './button'
+export * from './dropdown-menu'
 export { Input } from './input'
 export { Label } from './label'
 export { Separator } from './separator'
+export * from './table'
