@@ -1,4 +1,5 @@
 export { Button } from './button'
+export * from './dialog'
 export * from './dropdown-menu'
 export { Input } from './input'
 export { Label } from './label'
