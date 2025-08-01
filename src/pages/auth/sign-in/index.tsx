@@ -1,9 +1,11 @@
 import { zodResolver } from '@hookform/resolvers/zod'
+import { useMutation } from '@tanstack/react-query'
 import { Helmet } from 'react-helmet-async'
 import { useForm } from 'react-hook-form'
 import { Link } from 'react-router'
 import { toast } from 'sonner'
 
+import { signInAPI } from '@/api'
 import { Button, Input, Label } from '@/components'
 
 import { signInFormSchema } from './schema'
@@ -21,10 +23,10 @@ export const SignIn = () => {
     },
   })
 
-  const handleSignIn = async (data: SignInFormData) => {
-    await new Promise((resolve) => setTimeout(resolve, 2000))
+  const { mutateAsync: authenticate } = useMutation({ mutationFn: signInAPI })
 
-    console.log(data)
+  const handleSignIn = async (data: SignInFormData) => {
+    await authenticate(data)
 
     toast.success('Enviamos um link de atualização para seu e-mail', {
       action: {
