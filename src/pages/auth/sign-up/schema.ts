@@ -10,7 +10,11 @@ export const signUpFormSchema = z.object({
   phone: z.string().min(1, {
     message: 'Telefone obrigatório',
   }),
-  email: z.email().min(1, {
-    message: 'E-mail obrigatório',
-  }),
+  email: z
+    .email({
+      message: 'E-mail inválido',
+    })
+    .min(1, {
+      message: 'E-mail obrigatório',
+    }),
 })
