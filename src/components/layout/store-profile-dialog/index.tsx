@@ -1,9 +1,13 @@
 import { zodResolver } from '@hookform/resolvers/zod'
-import { useMutation, useQuery } from '@tanstack/react-query'
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { useForm } from 'react-hook-form'
 import { toast } from 'sonner'
 
-import { getManagedRestaurantAPI, updateProfileAPI } from '@/api'
+import {
+  getManagedRestaurantAPI,
+  type GetManagedRestaurantResponse,
+  updateProfileAPI,
+} from '@/api'
 import {
   Button,
   DialogClose,
@@ -21,6 +25,8 @@ import { storeProfileDialogSchema } from './schema'
 import type { StoreProfileDialogSchema } from './types'
 
 export const StoreProfileDialog = () => {
+  const queryClient = useQueryClient()
+
   const { data: managedRestaurant } = useQuery({
     queryKey: ['managed-restaurant'],
     queryFn: getManagedRestaurantAPI,
@@ -41,6 +47,21 @@ export const StoreProfileDialog = () => {
 
   const { mutateAsync: updateProfile } = useMutation({
     mutationFn: updateProfileAPI,
+    onSuccess: (_, { name, description }) => {
+      const cached = queryClient.getQueryData<GetManagedRestaurantResponse>([
+        'managed-restaurant',
+      ])
+
+      console.log(cached)
+
+      if (cached) {
+        queryClient.setQueryData(['managed-restaurant'], {
+          ...cached,
+          name,
+          description,
+        })
+      }
+    },
   })
 
   const handleUpdateProfile = async (data: StoreProfileDialogSchema) => {
