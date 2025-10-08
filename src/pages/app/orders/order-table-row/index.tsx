@@ -1,3 +1,5 @@
+import { formatDistanceToNow } from 'date-fns'
+import { ptBR } from 'date-fns/locale'
 import { ArrowRight, Search, X } from 'lucide-react'
 
 import {
@@ -9,8 +11,22 @@ import {
 } from '@/components'
 
 import { OrderDetails } from '../order-details'
+import { OrderStatus } from '../order-status'
+import type { OrderTableRowProps } from '../orders'
 
-export const OrderTableRow = () => {
+export const OrderTableRow = ({ order }: OrderTableRowProps) => {
+  const { orderId, createdAt, status, customerName, total } = order
+
+  const formattedTotal = total.toLocaleString('pt-BR', {
+    style: 'currency',
+    currency: 'BRL',
+  })
+
+  const distanceToNow = formatDistanceToNow(createdAt, {
+    locale: ptBR,
+    addSuffix: true,
+  })
+
   return (
     <TableRow>
       <TableCell>
@@ -25,18 +41,13 @@ export const OrderTableRow = () => {
           <OrderDetails />
         </Dialog>
       </TableCell>
-      <TableCell className="font-mono text-xs font-medium">
-        dasjd123hidha2
-      </TableCell>
-      <TableCell className="text-muted-foreground">há 10 minutos</TableCell>
+      <TableCell className="font-mono text-xs font-medium">{orderId}</TableCell>
+      <TableCell className="text-muted-foreground">{distanceToNow}</TableCell>
       <TableCell>
-        <div className="flex items-center gap-2">
-          <span className="h-2 w-2 rounded-full bg-slate-400"></span>
-          <span className="text-muted-foreground font-medium">Pendente</span>
-        </div>
+        <OrderStatus status={status} />
       </TableCell>
-      <TableCell className="font-medium">John Doe</TableCell>
-      <TableCell className="font-medium">R$ 100,00</TableCell>
+      <TableCell className="font-medium">{customerName}</TableCell>
+      <TableCell className="font-medium">R$ {formattedTotal}</TableCell>
       <TableCell>
         <Button variant="outline" size="xs">
           <ArrowRight className="mr-2 h-3 w-3" />
