@@ -1,3 +1,4 @@
+export * from './cancel-order'
 export * from './get-managed-restaurant'
 export * from './get-order-details'
 export * from './get-orders'

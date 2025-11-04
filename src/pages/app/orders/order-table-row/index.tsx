@@ -1,8 +1,10 @@
+import { useMutation } from '@tanstack/react-query'
 import { formatDistanceToNow } from 'date-fns'
 import { ptBR } from 'date-fns/locale'
 import { ArrowRight, Search, X } from 'lucide-react'
 import { useState } from 'react'
 
+import { cancelOrder, type GetOrdersResponse } from '@/api'
 import {
   Button,
   Dialog,
@@ -10,6 +12,7 @@ import {
   TableCell,
   TableRow,
 } from '@/components'
+import { queryClient } from '@/lib'
 
 import { OrderDetails } from '../order-details'
 import { OrderStatus } from '../order-status'
@@ -19,6 +22,28 @@ export const OrderTableRow = ({ order }: OrderTableRowProps) => {
   const { orderId, createdAt, status, customerName, total } = order
 
   const [isDetailsDialogOpen, setIsDetailsDialogOpen] = useState(false)
+
+  const { mutateAsync: cancelOrderFn } = useMutation({
+    mutationFn: cancelOrder,
+    async onSuccess(_, { orderId }) {
+      const ordersListCache = queryClient.getQueriesData<GetOrdersResponse>({
+        queryKey: ['orders'],
+      })
+
+      ordersListCache.forEach(([cacheKey, cacheData]) => {
+        if (!cacheData) return
+
+        queryClient.setQueryData<GetOrdersResponse>(cacheKey, {
+          ...cacheData,
+          orders: cacheData.orders.map((order) =>
+            order.orderId === orderId
+              ? { ...order, status: 'canceled' }
+              : order,
+          ),
+        })
+      })
+    },
+  })
 
   const formattedTotal = (total / 100).toLocaleString('pt-BR', {
     style: 'currency',
@@ -63,7 +88,12 @@ export const OrderTableRow = ({ order }: OrderTableRowProps) => {
         </Button>
       </TableCell>
       <TableCell>
-        <Button variant="ghost" size="xs">
+        <Button
+          size="xs"
+          variant="ghost"
+          disabled={!['pending', 'processing'].includes(status)}
+          onClick={() => cancelOrderFn({ orderId })}
+        >
           <X className="mr-2 h-3 w-3" />
           Cancelar
         </Button>
